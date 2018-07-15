@@ -7,10 +7,10 @@ import java.util.function.Predicate;
  * Created by Сергей on 24.06.2018.
  */
 public class Array<E> implements List<E> {
-    private static final int INITIAL_CAPCITY = 16;
-    private static final int FACTOR = 2;
-    private Object[] ar = new Object[INITIAL_CAPCITY];
-    private int size;
+    static final int INITIAL_CAPCITY = 16;
+    static final int FACTOR = 2;
+    Object[] ar = new Object[INITIAL_CAPCITY];
+    int size;
 
     public boolean add(E object) {
         if (size == ar.length)
@@ -171,7 +171,7 @@ public class Array<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new ArrayIterator<E>(ar,size);
+        return new ArrayIterator<E>(this);
     }
 
     @Override
@@ -200,7 +200,8 @@ public class Array<E> implements List<E> {
         return false;
     }
 
-    @Override
+    //TODO
+   /* @Override
     public boolean removeIf(Predicate<? super E> predicate) {
         boolean isRemoved = false;
         if (predicate != null) {
@@ -218,7 +219,7 @@ public class Array<E> implements List<E> {
             this.size = size;
         }
         return isRemoved;
-    }
+    }*/
 
 
     public void sort() {
