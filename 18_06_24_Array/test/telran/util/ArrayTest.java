@@ -26,7 +26,7 @@ public class ArrayTest {
 
     @BeforeEach
     void setUp() {
-        array = new LinkedList<>();
+        array = new Array<>();
         strings = new Array<>();
         fillarray(aeExpl, array);
         fillarray(aeExpStr, strings);
