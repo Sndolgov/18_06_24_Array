@@ -30,5 +30,6 @@ public class ArrayIterator<E> implements Iterator<E> {
     @Override
     public void remove() {
         //TODO
+
     }
 }
