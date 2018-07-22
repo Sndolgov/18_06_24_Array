@@ -32,8 +32,8 @@ class ListTests {
 
     @BeforeEach
     public void setUp() throws Exception {
-        numbers=new Array<Integer>();
-        strings=new Array<String>();
+        numbers=new LinkedList<>();
+        strings=new LinkedList<>();
         fillList(arExp1,numbers);
         fillList(arExpStr,strings);
     }
