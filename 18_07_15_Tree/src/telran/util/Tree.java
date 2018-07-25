@@ -8,18 +8,21 @@ import java.util.Set;
 /**
  * Created by Сергей on 15.07.2018.
  */
-public class Tree <E> implements Set<E> {
+
+@SuppressWarnings("unchecked")
+public class Tree<E> implements Set<E> {
     Comparator<E> comp;
     NodeTree<E> root;
-    int size;
 
     public Tree() {
-        comp=( Comparator<E>)Comparator.naturalOrder();
+        comp = (Comparator<E>) Comparator.naturalOrder();
     }
 
     public Tree(Comparator<E> comp) {
         this.comp = comp;
     }
+
+    int size;
 
     @Override
     public int size() {
@@ -28,21 +31,22 @@ public class Tree <E> implements Set<E> {
 
     @Override
     public boolean isEmpty() {
-        return size==0;
+        return size == 0;
     }
 
     @Override
     public boolean contains(Object o) {
         NodeTree<E> current = root;
-        while (current!=null && !o.equals(current.obj)){
-            current=comp.compare((E) o,current.obj)<0?current.left:current.right;
+        while (current != null && !o.equals(current.obj)) {
+            current = comp.compare((E) o, current.obj) < 0 ?
+                    current.left : current.right;
         }
-        return current!=null;
+        return current != null;
     }
 
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new TreeIterator<E>(this);
     }
 
     @Override
@@ -57,7 +61,34 @@ public class Tree <E> implements Set<E> {
 
     @Override
     public boolean add(E e) {
-        return false;
+        if (contains(e))
+            return false;
+        NodeTree<E> parent = null;
+        NodeTree<E> newNode = new NodeTree<>(e);
+        if (root == null) {
+            root = newNode;
+        } else {
+            parent = getParent(e);
+            if (comp.compare(e, parent.obj) < 0) {
+                parent.left = newNode;
+            } else {
+                parent.right = newNode;
+            }
+        }
+        newNode.parent = parent;
+        size++;
+        return true;
+    }
+
+    private NodeTree<E> getParent(E e) {
+        NodeTree<E> parent = root;
+        NodeTree<E> current = root;
+        while (current != null) {
+            parent = current;
+            current = comp.compare(e, current.obj) < 0 ?
+                    current.left : current.right;
+        }
+        return parent;
     }
 
     @Override
@@ -90,3 +121,4 @@ public class Tree <E> implements Set<E> {
 
     }
 }
+
