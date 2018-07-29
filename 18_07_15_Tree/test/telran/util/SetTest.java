@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Created by Сергей on 22.07.2018.
  */
-class TreeTest {
+class SetTest {
     Set<Integer> set;
     Integer[] expOriginal = {100, 80, 40, 30, 20, 50, 82, 90, 85, 95, 81};
     Integer[] expAdd = {100, 80, 40, 30, 20, 50, 82, 90, 85, 95, 1000, 81};
@@ -27,11 +27,12 @@ class TreeTest {
     Integer[] numbersMultiple20 = {100, 80, 40, 20};
     Integer[] arrEmpty = new Integer[0];
     Integer[] expAddNumbers = {100, 80, 40, 30, 20, 50, 82, 90, 85, 95, 1, 2, 3, 180, 900, 81};
-
+    Integer[] expOdd = {85, 95, 81};
+    Integer[] expEven = {100, 80, 40, 30, 20, 50, 82, 90};
 
     @BeforeEach
     void setUp() throws Exception {
-        set = new Tree<>();
+        set = new HashTable<>();
         createSet(set, expOriginal);
     }
 
@@ -110,7 +111,7 @@ class TreeTest {
     }
 
     @Test
-    void removeif20() {
+    void removeIf20() {
         set.removeIf(x -> x % 20 == 0);
         testSetArray(set, expMultiple20);
     }
@@ -122,13 +123,13 @@ class TreeTest {
     }
 
     @Test
-    void removeif100() {
+    void removeIf100() {
         set.removeIf(x -> x == 100);
         testSetArray(set, expNo100);
     }
 
     @Test
-    void removeif80And82() {
+    void removeIf80And82() {
         Integer[] exp = {100, 40, 30, 20, 50, 81, 90, 85, 95};
         set.add(81);
         set.removeIf(x -> x == 80 || x == 82);
@@ -136,7 +137,7 @@ class TreeTest {
     }
 
     @Test
-    void removeif80() {
+    void removeIf80() {
         set.removeIf(x -> x == 80);
         testSetArray(set, expNo80);
     }
@@ -180,7 +181,7 @@ class TreeTest {
     }
 
     @Test
-    void retainAll() {
+    void retainAllU() {
         List<Integer> list = Arrays.asList(arrEmpty);
         assertTrue(set.retainAll(list));
         testSetArray(set, arrEmpty);
@@ -200,10 +201,122 @@ class TreeTest {
     }
 
     @Test
-    void clear() {
+    void clearU() {
         set.clear();
         assertEquals(0, set.size());
         testSetArray(set, arrEmpty);
     }
+
+    @Test
+    void retainAll() {
+        Set<Integer> setOdd = new Tree<>();
+        createSet(setOdd, expOdd);
+        assertTrue(set.retainAll(setOdd));
+        testSetArray(setOdd, expOdd);
+        assertFalse(set.retainAll(setOdd));
+        set.retainAll(new Tree<>());
+        assertEquals(0, set.size());
+        testSetArray(set, new Integer[0]);
+
+    }
+
+    @Test
+    void removeAllU() {
+        Set<Integer> setOdd = new Tree<>();
+        createSet(setOdd, expOdd);
+        assertTrue(set.removeAll(setOdd));
+        testSetArray(set, expEven);
+        assertFalse(set.removeAll(setOdd));
+    }
+
+    @Test
+    void clear() {
+        set.clear();
+        assertEquals(0, set.size());
+        testSetArray(set, new Integer[0]);
+    }
+
+    @Test
+    void removeIfU() {
+        set.removeIf(x -> x % 2 == 0);
+        testSetArray(set, expOdd);
+        set.removeIf(x -> true);
+        assertEquals(0, set.size());
+        testSetArray(set, new Integer[0]);
+    }
+
+    @Test
+    void containsU() {
+        assertTrue(set.contains(100));
+        assertTrue(set.contains(20));
+        assertTrue(set.contains(95));
+        assertFalse(set.contains(1000));
+    }
+
+    @Test
+    void testIteratorU() {
+        testSetArray(set, expOriginal);
+    }
+
+
+    @Test
+    void testAddU() {
+        assertFalse(set.add(40));
+        assertTrue(set.add(1000));
+        testSetArray(set, expAdd);
+
+    }
+
+    @Test
+    void remove80U() {
+        set.remove(80);
+        testSetArray(set, expNo80);
+    }
+
+    @Test
+    void remove30U() {
+        set.remove(30);
+        testSetArray(set, expNo30);
+    }
+
+    @Test
+    void remove82U() {
+        set.remove(82);
+        testSetArray(set, expNo82);
+    }
+
+    @Test
+    void remove20U() {
+        set.remove(20);
+        testSetArray(set, expNo20);
+    }
+
+    @Test
+    void remove95U() {
+        set.remove(95);
+        testSetArray(set, expNo95);
+    }
+
+    @Test
+    void remove100U() {
+
+        set.remove(100);
+        testSetArray(set, expNo100);
+    }
+
+    @Test
+    void addAll() {
+        Set<Integer> setAll = new Tree<>();
+        assertTrue(setAll.addAll(set));
+        testSetArray(set, expOriginal);
+        assertFalse(setAll.addAll(set));
+    }
+    /*@Test
+    void toArray() {
+        Object[]actual=set.toArray();
+        Arrays.sort(expOriginal);
+        assertArrayEquals(expOriginal,actual);
+    }*/
+
 
 }
