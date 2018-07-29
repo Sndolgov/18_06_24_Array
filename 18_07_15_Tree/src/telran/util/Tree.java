@@ -36,12 +36,7 @@ public class Tree<E> implements Set<E> {
 
     @Override
     public boolean contains(Object o) {
-        NodeTree<E> current = root;
-        while (current != null && !o.equals(current.obj)) {
-            current = comp.compare((E) o, current.obj) < 0 ?
-                    current.left : current.right;
-        }
-        return current != null;
+        return findNode(o) != null;
     }
 
     @Override
@@ -93,32 +88,107 @@ public class Tree<E> implements Set<E> {
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        NodeTree<E> remove = findNode(o);
+        boolean res = false;
+        if (remove != null) {
+            res = true;
+            removeNode(remove);
+        }
+        return res;
+    }
+
+    void removeNode(NodeTree<E> remove) {
+        if (remove.left != null && remove.right != null)
+            removeJunction(remove);
+        else removeSimpleNode(remove);
+    }
+
+    private void removeJunction(NodeTree<E> node) {
+        NodeTree<E> substitute = getSubstitute(node.right);
+        node.obj = substitute.obj;
+        removeSimpleNode(substitute);
+    }
+
+    private NodeTree<E> getSubstitute(NodeTree<E> node) {
+        NodeTree<E> substitute = node;
+        while ((node = node.left) != null) {
+            substitute = node;
+        }
+        return substitute;
+    }
+
+    private void removeSimpleNode(NodeTree<E> remove) {
+        NodeTree<E> child = remove.left != null ? remove.left : remove.right;
+        NodeTree<E> parent = remove.parent;
+
+        if (parent != null) {
+            if (parent.left == remove) parent.left = child;
+            else parent.right = child;
+            if (child != null)
+                child.parent = parent;
+        } else {
+            removeSimpleRoot(child);
+        }
+        size--;
+    }
+
+    private void removeSimpleRoot(NodeTree<E> child) {
+        root = child;
+        if (child != null)
+            child.parent = null;
+    }
+
+    private NodeTree<E> findNode(Object o) {
+        NodeTree<E> current = root;
+        while (current != null && !o.equals(current.obj)) {
+            current = comp.compare((E) o, current.obj) < 0 ?
+                    current.left : current.right;
+        }
+        return current;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        //TODO
+        for (Object o : c)
+            if (!this.contains(o))
+                return false;
+        return true;
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return false;
+        //TODO
+        boolean res = false;
+        for (Object o : c)
+            if (add((E) o))
+                res = true;
+        return res;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        //TODO удалить все элементы, которых нет в коллекции
+        if (c.containsAll(this))
+            return false;
+        removeIf(x -> !c.contains(x));
+        return true;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        //TODO удалить все элементы, которые есть в коллекции
+        boolean res = false;
+        if (removeIf(c::contains))
+            res = true;
+        return res;
     }
 
     @Override
     public void clear() {
-
+        //TODO
+        removeIf(x->true);
     }
 }
+
 

@@ -1,7 +1,6 @@
 package telran.util;
 
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Created by Сергей on 18.07.2018.
@@ -10,6 +9,7 @@ import java.util.Set;
 
 public class TreeIterator<E> implements Iterator<E> {
     NodeTree<E> current;
+    NodeTree<E> previous;
     Tree<E> tree;
 
     public TreeIterator(Tree<E> tree) {
@@ -17,7 +17,7 @@ public class TreeIterator<E> implements Iterator<E> {
         current = getLeastNode(tree.root);
     }
 
-    private NodeTree<E> getLeastNode(NodeTree<E> root) {
+    NodeTree<E> getLeastNode(NodeTree<E> root) {
         NodeTree<E> nodeLeft = root;
         if (root != null) {
             while ((root = root.left) != null)
@@ -33,25 +33,30 @@ public class TreeIterator<E> implements Iterator<E> {
 
     @Override
     public E next() {
-        // TODO
         E e = current.obj;
+        previous = current;
         if (current.right != null)
             current = getLeastNode(current.right);
         else {
-            NodeTree<E> last = current;
-            current = current.parent;
-            while (current != null && current.left != last) {
-                last = current;
-                current = current.parent;
-            }
+            current = getNextNodeParent(current);
         }
         return e;
     }
 
-    public static void main(String[] args) {
-        Tree<Integer> set = new Tree<>();
-        TreeIterator iterator = new TreeIterator(set);
-        iterator.getLeastNode(null);
+    private NodeTree<E> getNextNodeParent(NodeTree<E> current) {
+        NodeTree<E> node = current;
+        while ((current = current.parent) != null && current.left != node) {
+            node = current;
+        }
+        return current;
+    }
+
+    @Override
+    public void remove() {
+        //TODO
+        tree.removeNode(previous);
+        if (previous.right != null)
+            current = previous.left != null ? previous : getLeastNode(previous.right);
     }
 }
 
