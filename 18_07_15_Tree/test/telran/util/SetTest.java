@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,7 +61,7 @@ class SetTest {
             actual[ind++] = number;
         }
         Arrays.sort(expected);
-        //  Arrays.sort(actual);
+        Arrays.sort(actual);
         assertArrayEquals(expected, actual);
 
     }
@@ -72,6 +71,7 @@ class SetTest {
         assertFalse(set.add(40));
         assertTrue(set.add(1000));
         testSetArray(set, expAdd);
+
     }
 
     @Test

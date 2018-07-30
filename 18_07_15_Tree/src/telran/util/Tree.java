@@ -10,7 +10,7 @@ import java.util.Set;
  */
 
 @SuppressWarnings("unchecked")
-public class Tree<E> implements Set<E> {
+public class Tree<E> implements Set<E> { //дерево лучше чем HashTable когда нужны результате в каком-то диапазоне (от - до)
     Comparator<E> comp;
     NodeTree<E> root;
 
@@ -149,7 +149,6 @@ public class Tree<E> implements Set<E> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        //TODO
         for (Object o : c)
             if (!this.contains(o))
                 return false;
@@ -158,7 +157,6 @@ public class Tree<E> implements Set<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        //TODO
         boolean res = false;
         for (Object o : c)
             if (add((E) o))
@@ -168,7 +166,6 @@ public class Tree<E> implements Set<E> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        //TODO удалить все элементы, которых нет в коллекции
         if (c.containsAll(this))
             return false;
         removeIf(x -> !c.contains(x));
@@ -177,7 +174,6 @@ public class Tree<E> implements Set<E> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        //TODO удалить все элементы, которые есть в коллекции
         boolean res = false;
         if (removeIf(c::contains))
             res = true;
@@ -186,7 +182,6 @@ public class Tree<E> implements Set<E> {
 
     @Override
     public void clear() {
-        //TODO
         removeIf(x->true);
     }
 }

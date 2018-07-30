@@ -53,10 +53,10 @@ public class TreeIterator<E> implements Iterator<E> {
 
     @Override
     public void remove() {
-        //TODO
         tree.removeNode(previous);
         if (previous.right != null)
             current = previous.left != null ? previous : getLeastNode(previous.right);
     }
+
 }
 

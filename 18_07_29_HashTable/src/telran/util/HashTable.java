@@ -1,19 +1,29 @@
 package telran.util;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Сергей on 29.07.2018.
  */
-public class HashTable<E> implements Set<E> {
-    List<E> hashTable;
+
+@SuppressWarnings("unchecked")
+public class HashTable<E> implements Set<E> { //сложность добавления и поиска - 1
+    List<E>[] hashTable;
+    private float factor = 0.75f; //size/hashTable.length
+    int size;
+    private static final int INITIAL_LENGTH = 16;
+
+    public HashTable() {
+        this(INITIAL_LENGTH);
+    }
+
+    public HashTable(int length) {
+        hashTable = new List[length];
+    }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
@@ -23,12 +33,18 @@ public class HashTable<E> implements Set<E> {
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        int index = getIndex(o);
+        return hashTable[index] != null && hashTable[index].contains(o);
+    }
+
+    private int getIndex(Object o) {
+        int hashCode = o.hashCode();
+        return Math.abs(hashCode) % hashTable.length;
     }
 
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new HashTableIterator<E>(this);
     }
 
     @Override
@@ -43,36 +59,76 @@ public class HashTable<E> implements Set<E> {
 
     @Override
     public boolean add(E e) {
+        int index = getIndex(e);
+        if (hashTable[index] == null)
+            hashTable[index] = new LinkedList<E>();
+        else if (hashTable[index].contains(e))
+            return false;
+        return addIndex(index, e);
+    }
+
+    private boolean addIndex(int index, E e) {
+        if (hashTable[index].add(e)) {
+            size++;
+            if ((float) size / hashTable.length > factor)
+                tableRecreation();
+            return true;
+        }
         return false;
+    }
+
+    private void tableRecreation() {
+        List<E>[] tmp = hashTable;
+        hashTable = new List[tmp.length * 2];
+        size = 0;
+        for (List<E> list : tmp)
+            if (list != null)
+                this.addAll(list);
     }
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        int index = getIndex(o);
+        return hashTable[index].remove(o);
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        for (Object o : c)
+            if (!this.contains(o))
+                return false;
+        return true;
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return false;
+        boolean res = false;
+        for (E e : c) {
+            if (this.add(e))
+                res = true;
+        }
+        return res;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        if (c.containsAll(this))
+            return false;
+        removeIf(x -> !c.contains(x));
+        return true;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        boolean res = false;
+        if (removeIf(c::contains))
+            res = true;
+        return res;
     }
 
     @Override
     public void clear() {
-
+        hashTable = new List[INITIAL_LENGTH];
+        size = 0;
     }
 }
